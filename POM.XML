@@ -1,0 +1,15 @@
+ProductManagerFX/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── productmanager/
+│   │   │           ├── Product.java
+│   │   │           ├── ProductApplication.java
+│   │   │           └── controller/
+│   │   │               └── ProductController.java
+│   │   └── resources/
+│   │       ├── product-view.fxml
+│   │       └── styles.css
+│   └── test/
+└── pom.xml
