@@ -30,7 +30,7 @@ public class ProductController {
         products = FXCollections.observableArrayList();
         productListView.setItems(products);
         
-        // Permettre la sélection multiple
+        // Un seul produit sélectionné à la fois
         productListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         
         // Ajouter un écouteur pour la sélection
@@ -50,74 +50,43 @@ public class ProductController {
     
     @FXML
     private void addProduct() {
-        try {
-            String name = nameField.getText().trim();
-            String priceText = priceField.getText().trim();
-            
-            if (name.isEmpty() || priceText.isEmpty()) {
-                showMessage("Veuillez remplir tous les champs!", AlertType.WARNING);
-                return;
-            }
-            
-            double price = Double.parseDouble(priceText);
-            
-            if (price <= 0) {
-                showMessage("Le prix doit être positif!", AlertType.WARNING);
-                return;
-            }
-            
-            Product product = new Product(name, price);
-            products.add(product);
-            
-            clearFields();
-            updateStats();
-            showMessage("Produit ajouté avec succès!", AlertType.INFORMATION);
-            
-        } catch (NumberFormatException e) {
-            showMessage("Format de prix invalide!", AlertType.ERROR);
+        Product product = readForm();
+        if (product == null) {
+            return;
         }
+
+        products.add(product);
+
+        clearFields();
+        updateStats();
+        showMessage("Produit ajouté avec succès!", AlertType.INFORMATION);
     }
-    
+
     @FXML
     private void updateProduct() {
         Product selectedProduct = productListView.getSelectionModel().getSelectedItem();
-        
+
         if (selectedProduct == null) {
             showMessage("Veuillez sélectionner un produit à modifier!", AlertType.WARNING);
             return;
         }
-        
-        try {
-            String name = nameField.getText().trim();
-            String priceText = priceField.getText().trim();
-            
-            if (name.isEmpty() || priceText.isEmpty()) {
-                showMessage("Veuillez remplir tous les champs!", AlertType.WARNING);
-                return;
-            }
-            
-            double price = Double.parseDouble(priceText);
-            
-            if (price <= 0) {
-                showMessage("Le prix doit être positif!", AlertType.WARNING);
-                return;
-            }
-            
-            selectedProduct.setName(name);
-            selectedProduct.setPrice(price);
-            
-            // Rafraîchir la ListView
-            productListView.refresh();
-            
-            clearFields();
-            updateStats();
-            showMessage("Produit modifié avec succès!", AlertType.INFORMATION);
-            
-        } catch (NumberFormatException e) {
-            showMessage("Format de prix invalide!", AlertType.ERROR);
+
+        Product edited = readForm();
+        if (edited == null) {
+            return;
         }
+
+        selectedProduct.setName(edited.getName());
+        selectedProduct.setPrice(edited.getPrice());
+
+        // Rafraîchir la ListView
+        productListView.refresh();
+
+        clearFields();
+        updateStats();
+        showMessage("Produit modifié avec succès!", AlertType.INFORMATION);
     }
-    
+
     @FXML
     private void deleteProduct() {
         Product selectedProduct = productListView.getSelectionModel().getSelectedItem();
@@ -141,6 +110,32 @@ public class ProductController {
         messageLabel.setText("");
     }
     
+    /** Valide le formulaire ; renvoie null (et affiche l'erreur) si la saisie est invalide. */
+    private Product readForm() {
+        String name = nameField.getText().trim();
+        String priceText = priceField.getText().trim().replace(',', '.');
+
+        if (name.isEmpty() || priceText.isEmpty()) {
+            showMessage("Veuillez remplir tous les champs!", AlertType.WARNING);
+            return null;
+        }
+
+        double price;
+        try {
+            price = Double.parseDouble(priceText);
+        } catch (NumberFormatException e) {
+            showMessage("Format de prix invalide!", AlertType.ERROR);
+            return null;
+        }
+
+        if (price <= 0) {
+            showMessage("Le prix doit être positif!", AlertType.WARNING);
+            return null;
+        }
+
+        return new Product(name, price);
+    }
+
     private void updateStats() {
         int count = products.size();
         double total = products.stream().mapToDouble(Product::getPrice).sum();

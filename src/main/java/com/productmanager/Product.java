@@ -1,5 +1,7 @@
 package com.productmanager;
 
+import java.util.Objects;
+
 public class Product {
     private String name;
     private double price;
@@ -45,6 +47,12 @@ public class Product {
         if (obj == null || getClass() != obj.getClass()) return false;
         Product product = (Product) obj;
         return Double.compare(product.price, price) == 0 &&
-               name.equals(product.name);
+               Objects.equals(name, product.name);
+    }
+
+    // hashCode doit être cohérent avec equals
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, price);
     }
 }

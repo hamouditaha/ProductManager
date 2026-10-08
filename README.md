@@ -1,5 +1,7 @@
 # Product Manager (JavaFX)
 
+[![CI](https://github.com/hamouditaha/ProductManager/actions/workflows/ci.yml/badge.svg)](https://github.com/hamouditaha/ProductManager/actions/workflows/ci.yml)
+
 Desktop application for managing a product catalogue, built with **JavaFX**, **FXML** and **CSS**, following the MVC pattern.
 
 ![Java](https://img.shields.io/badge/Java-17-ED8B00?logo=openjdk&logoColor=white)
